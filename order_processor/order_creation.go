@@ -10,7 +10,7 @@ import (
 // creatingOrderAction includes the action that fires when we enter the creating order state
 type creatingOrderAction struct{}
 
-func (c *creatingOrderAction) Execute(event sm.EventContext) (sm.Event, error) {
+func (c *creatingOrderAction) Execute(event sm.EventData) (sm.Event, error) {
 	order, ok := event.(*OrderCreationContext)
 	if !ok {
 		return "", fmt.Errorf("%w: order_creation got %T but expected *OrderCreationContext", ErrBadExecutionContext, order)

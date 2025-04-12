@@ -41,41 +41,6 @@ func NewStateMachine(initialState State, stateMap StateMap, opts ...Option) (*St
 	return s, nil
 }
 
-// NoOp is an event that does not affect the state of the system
-const NoOp Event = "NoOp"
-
-// State represents an extensible state type in the state machine
-type State string
-
-func (s State) String() string {
-	return string(s)
-}
-
-// Event represents an extensible event type
-type Event string
-
-func (s Event) String() string {
-	return string(s)
-}
-
-// EventContext is the data that's passed to each action
-type EventContext any
-
-// Action represents the action to be executed in a given state
-type Action interface {
-	Execute(eventData EventContext) (Event, error)
-}
-
-// EventMap represents a mapping of states and their implementations
-type EventMap map[Event]State
-
-// StateMap represents a mapping of states and their implementations
-type StateMap map[State]StateSet
-type StateSet struct {
-	Action   Action
-	EventMap EventMap
-}
-
 // getNextState returns the next state for the event given the machine's current
 // state, or an error if the event can't be handled in the given state.
 func (s *StateMachine) getNextState(event Event) (State, error) {
@@ -101,7 +66,7 @@ func (s *StateMachine) getNextState(event Event) (State, error) {
 }
 
 // Send event sends an event to the state machine
-func (s *StateMachine) SendEvent(ctx context.Context, event Event, eventContext EventContext) error {
+func (s *StateMachine) SendEvent(ctx context.Context, event Event, eventData EventData) error {
 
 	logger, err := logger.GetZapLogger("info", "2006-01-02 15:04:05.000 MST")
 	if err != nil {
@@ -146,7 +111,7 @@ func (s *StateMachine) SendEvent(ctx context.Context, event Event, eventContext 
 		// besides just the event name that may be needed by the action itself
 		logger.Debug("Calling action", zap.Stringer("next_state", nextState))
 
-		nextEvent, err := state.Action.Execute(eventContext)
+		nextEvent, err := state.Action.Execute(eventData)
 		if err != nil {
 			return fmt.Errorf("failed to execute action: %w", err)
 		}

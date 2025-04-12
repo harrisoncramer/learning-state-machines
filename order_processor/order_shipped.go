@@ -8,7 +8,7 @@ import (
 
 type orderShippedAction struct{}
 
-func (a *orderShippedAction) Execute(eventCtx sm.EventContext) (sm.Event, error) {
+func (a *orderShippedAction) Execute(eventCtx sm.EventData) (sm.Event, error) {
 	shipment, ok := eventCtx.(*OrderShipmentContext)
 	if !ok {
 		return "", fmt.Errorf("%w: order_shipped got %T but expected *OrderShipmentContext", ErrBadExecutionContext, shipment)

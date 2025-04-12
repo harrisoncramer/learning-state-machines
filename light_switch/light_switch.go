@@ -21,7 +21,7 @@ const (
 // onAction represents the action executed on entering the On state.
 type onAction struct{}
 
-func (a *onAction) Execute(event sm.EventContext) (sm.Event, error) {
+func (a *onAction) Execute(event sm.EventData) (sm.Event, error) {
 	fmt.Println("Light turned on: 💡")
 	if event != nil {
 		fmt.Printf("Context provided: %+v\n", event)
