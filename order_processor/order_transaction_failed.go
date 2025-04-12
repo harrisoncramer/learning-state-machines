@@ -8,8 +8,11 @@ import (
 
 type TransactionFailedAction struct{}
 
-func (a *TransactionFailedAction) Execute(eventCtx sm.EventContext) sm.Event {
-	shipment := eventCtx.(*OrderShipmentContext)
+func (a *TransactionFailedAction) Execute(eventCtx sm.EventContext) (sm.Event, error) {
+	shipment, ok := eventCtx.(*OrderShipmentContext)
+	if !ok {
+		return "", ErrMissingOrderContext
+	}
 	fmt.Println("Transaction failed, err:", shipment.err)
-	return sm.NoOp
+	return sm.NoOp, nil
 }

@@ -35,7 +35,7 @@ const (
 	DeliverOrder    sm.Event = "DeliverOrder"
 )
 
-func NewOrderProcessor() *sm.StateMachine {
+func NewOrderProcessor(opts ...sm.Option) (*sm.StateMachine, error) {
 	return sm.NewStateMachine(OrderNotPlaced, sm.StateMap{
 		OrderNotPlaced: {
 			EventMap: sm.EventMap{
@@ -83,7 +83,5 @@ func NewOrderProcessor() *sm.StateMachine {
 		OrderDelivered: {
 			Action: &OrderDeliveredAction{},
 		},
-	}, func(sm *sm.StateMachine) {
-		// TODO: @harrisoncramer implement functional options pattern for state machine
-	})
+	}, opts...)
 }

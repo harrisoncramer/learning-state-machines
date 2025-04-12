@@ -8,8 +8,11 @@ import (
 
 type OrderFailedAction struct{}
 
-func (a *OrderFailedAction) Execute(eventCtx sm.EventContext) sm.Event {
-	order := eventCtx.(*OrderCreationContext)
+func (a *OrderFailedAction) Execute(eventCtx sm.EventContext) (sm.Event, error) {
+	order, ok := eventCtx.(*OrderCreationContext)
+	if !ok {
+		return "", ErrMissingOrderContext
+	}
 	fmt.Println("Order failed, err:", order.err)
-	return sm.NoOp
+	return sm.NoOp, nil
 }

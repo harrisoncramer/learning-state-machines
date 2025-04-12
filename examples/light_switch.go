@@ -8,20 +8,23 @@ import (
 )
 
 func LightSwitch() {
-	ls := light_switch.NewLightSwitch()
+	ls, err := light_switch.NewLightSwitch()
+	if err != nil {
+		log.Fatalf("failed to set up light switch: %v", err)
+	}
 
 	fmt.Printf("The initial state is: %s\n", ls.GetCurrentState())
 
-	err := ls.SendEvent(light_switch.SwitchOn, nil) // No additional context is needed
+	err = ls.SendEvent(light_switch.SwitchOn, nil) // No additional context is needed
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to send event: %v", err)
 	}
 
 	fmt.Printf("The current state is: %s\n", ls.GetCurrentState())
 
 	err = ls.SendEvent(light_switch.SwitchOff, nil)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to send event: %v", err)
 	}
 
 	fmt.Printf("The current state is: %s\n", ls.GetCurrentState())

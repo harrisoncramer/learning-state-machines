@@ -8,8 +8,11 @@ import (
 
 type OrderDeliveredAction struct{}
 
-func (a *OrderDeliveredAction) Execute(eventCtx sm.EventContext) sm.Event {
-	order := eventCtx.(*OrderCreationContext)
+func (a *OrderDeliveredAction) Execute(eventCtx sm.EventContext) (sm.Event, error) {
+	order, ok := eventCtx.(*OrderCreationContext)
+	if !ok {
+		return "", ErrMissingOrderContext
+	}
 	fmt.Println("Order delivered, items:", order.items)
-	return sm.NoOp
+	return sm.NoOp, nil
 }

@@ -21,15 +21,15 @@ const (
 // onAction represents the action executed on entering the On state.
 type onAction struct{}
 
-func (a *onAction) Execute(event sm.EventContext) sm.Event {
+func (a *onAction) Execute(event sm.EventContext) (sm.Event, error) {
 	fmt.Println("Light turned on: 💡")
 	if event != nil {
 		fmt.Printf("Context provided: %+v\n", event)
 	}
-	return sm.NoOp
+	return sm.NoOp, nil
 }
 
-func NewLightSwitch() *sm.StateMachine {
+func NewLightSwitch() (*sm.StateMachine, error) {
 	return sm.NewStateMachine(lightOff, sm.StateMap{
 		lightOff: {
 			EventMap: sm.EventMap{
@@ -42,5 +42,5 @@ func NewLightSwitch() *sm.StateMachine {
 				SwitchOff: lightOff,
 			},
 		},
-	}, func(sm *sm.StateMachine) {})
+	})
 }

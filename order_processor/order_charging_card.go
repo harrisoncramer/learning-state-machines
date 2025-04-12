@@ -9,12 +9,16 @@ import (
 
 type ChargingCardAction struct{}
 
-func (a *ChargingCardAction) Execute(eventCtx sm.EventContext) sm.Event {
-	shipment := eventCtx.(*OrderShipmentContext)
+func (a *ChargingCardAction) Execute(eventCtx sm.EventContext) (sm.Event, error) {
+	shipment, ok := eventCtx.(*OrderShipmentContext)
+	if !ok {
+		return "", ErrMissingOrderContext
+	}
+
 	fmt.Println("Validating card, shipment:", shipment)
 	if shipment.cardNumber == "" {
 		shipment.err = errors.New("card number is invalid")
-		return FailTransaction
+		return FailTransaction, nil
 	}
-	return ShipOrder
+	return ShipOrder, nil
 }

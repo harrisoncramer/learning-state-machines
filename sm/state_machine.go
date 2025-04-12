@@ -2,7 +2,6 @@ package sm
 
 import (
 	"fmt"
-	"log"
 	"sync"
 
 	logger "github.com/harrisoncramer/learning-state-machines/sm/logger"
@@ -21,12 +20,13 @@ type StateMachine struct {
 	logger       *zap.Logger
 }
 
-type Option func(*StateMachine)
+// Option is a functional option pattern that can be used to configure the state machine
+type Option func(*StateMachine) error
 
-func NewStateMachine(initialState State, stateMap StateMap, opts ...Option) *StateMachine {
+func NewStateMachine(initialState State, stateMap StateMap, opts ...Option) (*StateMachine, error) {
 	logger, err := logger.GetZapLogger("info", "2006-01-02 15:04:05.000 MST")
 	if err != nil {
-		log.Fatalf("failed to configure logger: %v", err)
+		return nil, fmt.Errorf("failed to configure logger: %w", err)
 	}
 
 	s := &StateMachine{
@@ -36,11 +36,14 @@ func NewStateMachine(initialState State, stateMap StateMap, opts ...Option) *Sta
 		logger:       logger,
 	}
 
-	for _, opt := range opts {
-		opt(s)
+	for i, opt := range opts {
+		err := opt(s)
+		if err != nil {
+			return nil, fmt.Errorf("failed to run functional option %d: %w", i, err)
+		}
 	}
 
-	return s
+	return s, nil
 }
 
 // NoOp is an event that does not affect the state of the system
@@ -65,7 +68,7 @@ type EventContext any
 
 // Action represents the action to be executed in a given state
 type Action interface {
-	Execute(eventData EventContext) Event
+	Execute(eventData EventContext) (Event, error)
 }
 
 // EventMap represents a mapping of states and their implementations
@@ -141,7 +144,10 @@ func (s *StateMachine) SendEvent(event Event, eventContext EventContext) error {
 		// Otherwise, execute the next state's action and pass along the event context
 		// This event context can be used for side effects or to pass along other arbitrary data
 		// besides just the event name that may be needed by the action itself
-		nextEvent := state.Action.Execute(eventContext)
+		nextEvent, err := state.Action.Execute(eventContext)
+		if err != nil {
+			return fmt.Errorf("failed to execute action: %w", err)
+		}
 
 		// If it returns a no-op, then exit
 		if nextEvent == NoOp {
@@ -162,4 +168,8 @@ func (s *StateMachine) SendEvent(event Event, eventContext EventContext) error {
 // Gets the current state, for use outside the package
 func (s *StateMachine) GetCurrentState() State {
 	return s.currentState
+}
+
+func (s *StateMachine) SetLogger(l *zap.Logger) {
+	s.logger = l
 }
