@@ -15,7 +15,7 @@ type EventAndState struct {
 
 func TestLightSwitch(t *testing.T) {
 
-	switchOn := SwitchOn
+	switchOn := SwitchOn // needed for pointers...
 	switchOff := SwitchOff
 
 	tests := []struct {
