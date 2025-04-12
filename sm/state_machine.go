@@ -1,4 +1,4 @@
-package state_machine
+package sm
 
 import (
 	"fmt"
@@ -16,8 +16,8 @@ type StateMachine struct {
 	mutex        sync.Mutex
 }
 
-func NewStateMachine(initialState State, stateMap StateMap) *StateMachine {
-	return &StateMachine{
+func NewStateMachine(initialState State, stateMap StateMap) StateMachine {
+	return StateMachine{
 		currentState: initialState,
 		stateMap:     stateMap,
 		mutex:        sync.Mutex{},

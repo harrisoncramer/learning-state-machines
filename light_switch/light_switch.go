@@ -3,38 +3,40 @@ package light_switch
 import (
 	"fmt"
 
-	sm "github.com/harrisoncramer/learning-state-machines/state_machine"
+	"github.com/harrisoncramer/learning-state-machines/sm"
 )
 
+// The light switch can be in either an lightOn or an lightOff state
 const (
-	// The light switch can be in either an on or an off state
-	Off sm.State = "Off"
-	On  sm.State = "On"
+	lightOff sm.State = "Off"
+	lightOn  sm.State = "On"
+)
 
-	// The two types of events are a "switch off" or a "switch on"
+// The two types of events are a "switch off" or a "switch on"
+const (
 	SwitchOff sm.EventType = "SwitchOff"
 	SwitchOn  sm.EventType = "SwitchOn"
 )
 
-// OnAction represents the action executed on entering the On state.
-type OnAction struct{}
+// onAction represents the action executed on entering the On state.
+type onAction struct{}
 
-func (a *OnAction) Execute(event sm.EventType) sm.EventType {
+func (a *onAction) Execute(event sm.EventType) sm.EventType {
 	fmt.Printf("%s: Light turned on: 💡\n", event)
 	return sm.NoOp
 }
 
-func NewLightSwitch() *sm.StateMachine {
-	return sm.NewStateMachine(Off, sm.StateMap{
-		Off: {
+func NewLightSwitch() sm.StateMachine {
+	return sm.NewStateMachine(lightOff, sm.StateMap{
+		lightOff: {
 			EventMap: sm.EventMap{
-				SwitchOn: On,
+				SwitchOn: lightOn,
 			},
 		},
-		On: {
-			Action: &OnAction{},
+		lightOn: {
+			Action: &onAction{},
 			EventMap: sm.EventMap{
-				SwitchOff: Off,
+				SwitchOff: lightOff,
 			},
 		},
 	})
