@@ -6,13 +6,13 @@ import (
 	"github.com/harrisoncramer/learning-state-machines/sm"
 )
 
-type OrderDeliveredAction struct{}
+type orderDeliveredAction struct{}
 
-func (a *OrderDeliveredAction) Execute(eventCtx sm.EventContext) (sm.Event, error) {
+func (a *orderDeliveredAction) Execute(eventCtx sm.EventContext) (sm.Event, error) {
 	order, ok := eventCtx.(*OrderCreationContext)
 	if !ok {
 		return "", ErrMissingOrderContext
 	}
-	fmt.Println("Order delivered, items:", order.items)
+	fmt.Println("Order delivered, items:", order.Items)
 	return sm.NoOp, nil
 }

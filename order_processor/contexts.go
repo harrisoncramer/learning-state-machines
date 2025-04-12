@@ -19,10 +19,10 @@ func (c *OrderShipmentContext) String() string {
 
 // OrderCreationContext contains data about the actual order, including the items and any errors that pertain to it
 type OrderCreationContext struct {
-	items []string
+	Items []string
 	err   error
 }
 
 func (c OrderCreationContext) String() string {
-	return fmt.Sprintf("OrderCreationContext: items: %s; err: %s", strings.Join(c.items, ","), c.err)
+	return fmt.Sprintf("OrderCreationContext: items: %s; err: %s", strings.Join(c.Items, ","), c.err)
 }

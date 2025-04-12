@@ -7,9 +7,9 @@ import (
 	"github.com/harrisoncramer/learning-state-machines/sm"
 )
 
-type ChargingCardAction struct{}
+type orderChargingCardAction struct{}
 
-func (a *ChargingCardAction) Execute(eventCtx sm.EventContext) (sm.Event, error) {
+func (a *orderChargingCardAction) Execute(eventCtx sm.EventContext) (sm.Event, error) {
 	shipment, ok := eventCtx.(*OrderShipmentContext)
 	if !ok {
 		return "", ErrMissingOrderContext

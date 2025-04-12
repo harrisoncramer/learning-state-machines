@@ -1,27 +1,29 @@
 package order_processor
 
 import (
+	"errors"
+
 	"github.com/harrisoncramer/learning-state-machines/sm"
 )
 
 // Possible states of the state machine for a given order, e.g. card is charging, order is shipped, etc
 const (
 	// The default state of the machine, no order has been placed yet
-	OrderNotPlaced sm.State = ""
+	orderNotPlaced sm.State = "OrderNotPlaced"
 	// The order is being created
-	OrderCreating sm.State = "OrderCreating"
+	orderCreating sm.State = "OrderCreating"
 	// The order creating failed and is now a failed order
-	OrderFailed sm.State = "OrderFailed"
+	orderFailed sm.State = "OrderFailed"
 	// The order is placed successfully
-	OrderPlaced sm.State = "OrderPlaced"
+	orderPlaced sm.State = "OrderPlaced"
 	// The credit card associated with the order is being charged
-	OrderChargingCard sm.State = "ChargingCard"
+	orderChargingCard sm.State = "ChargingCard"
 	// The transaction (financial processing) failed
-	OrderTransactionFailed sm.State = "OrderTransactionFailed"
+	orderTransactionFailed sm.State = "OrderTransactionFailed"
 	// The order has been shipped
-	OrderShipped sm.State = "OrderShipped"
+	orderShipped sm.State = "OrderShipped"
 	// The order has been delivered successfully
-	OrderDelivered sm.State = "OrderDelivered"
+	orderDelivered sm.State = "OrderDelivered"
 )
 
 // Possible events that cause changes in the state machine
@@ -35,53 +37,55 @@ const (
 	DeliverOrder    sm.Event = "DeliverOrder"
 )
 
+var ErrMissingOrderContext = errors.New("missing order creation context")
+
 func NewOrderProcessor(opts ...sm.Option) (*sm.StateMachine, error) {
-	return sm.NewStateMachine(OrderNotPlaced, sm.StateMap{
-		OrderNotPlaced: {
+	return sm.NewStateMachine(orderNotPlaced, sm.StateMap{
+		orderNotPlaced: {
 			EventMap: sm.EventMap{
-				PlaceOrder: OrderPlaced,
+				CreateOrder: orderCreating,
 			},
 		},
-		OrderCreating: {
-			Action: &CreatingOrderAction{},
+		orderCreating: {
+			Action: &creatingOrderAction{},
 			EventMap: sm.EventMap{
-				FailOrder:  OrderFailed,
-				PlaceOrder: OrderPlaced,
+				FailOrder:  orderFailed,
+				PlaceOrder: orderPlaced,
 			},
 		},
-		OrderFailed: {
-			Action: &OrderFailedAction{},
+		orderFailed: {
+			Action: &orderFailedAction{},
 			EventMap: sm.EventMap{
-				CreateOrder: OrderCreating,
+				CreateOrder: orderCreating,
 			},
 		},
-		OrderPlaced: {
-			Action: &OrderPlacedAction{},
+		orderPlaced: {
+			Action: &orderPlacedAction{},
 			EventMap: sm.EventMap{
-				ChargeCard: OrderChargingCard,
+				ChargeCard: orderChargingCard,
 			},
 		},
-		OrderChargingCard: {
-			Action: &ChargingCardAction{},
+		orderChargingCard: {
+			Action: &orderChargingCardAction{},
 			EventMap: sm.EventMap{
-				FailTransaction: OrderTransactionFailed,
-				ShipOrder:       OrderShipped,
+				FailTransaction: orderTransactionFailed,
+				ShipOrder:       orderShipped,
 			},
 		},
-		OrderTransactionFailed: {
-			Action: &TransactionFailedAction{},
+		orderTransactionFailed: {
+			Action: &orderTransactionFailedAction{},
 			EventMap: sm.EventMap{
-				ChargeCard: OrderChargingCard,
+				ChargeCard: orderChargingCard,
 			},
 		},
-		OrderShipped: {
-			Action: &OrderShippedAction{},
+		orderShipped: {
+			Action: &orderShippedAction{},
 			EventMap: sm.EventMap{
-				DeliverOrder: OrderDelivered,
+				DeliverOrder: orderDelivered,
 			},
 		},
-		OrderDelivered: {
-			Action: &OrderDeliveredAction{},
+		orderDelivered: {
+			Action: &orderDeliveredAction{},
 		},
 	}, opts...)
 }

@@ -1,6 +1,7 @@
 package examples
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/harrisoncramer/learning-state-machines/order_processor"
@@ -9,24 +10,34 @@ import (
 )
 
 func OrderProcessor() {
-
-	op, err := order_processor.NewOrderProcessor(func(sm *sm.StateMachine) error {
-		l, err := logger.GetZapLogger("debug", "")
-		if err != nil {
-			return err
-		}
-		sm.SetLogger(l)
-		return nil
-	})
+	op, err := order_processor.NewOrderProcessor(setLogger)
 	if err != nil {
 		log.Fatalf("failed to set up order processor: %v", err)
 	}
 
-	err = op.SendEvent(order_processor.PlaceOrder, nil)
+	fmt.Printf("The initial state is: %s\n", op.GetCurrentState())
+
+	err = op.SendEvent(order_processor.CreateOrder, order_processor.OrderCreationContext{
+		Items: []string{
+			"hat",
+			"shoe",
+			"can",
+		},
+	})
 	if err != nil {
 		log.Fatalf("Failed to send event: %v", err)
 	}
 
 	op.GetCurrentState()
 
+}
+
+// setLogger sets the debug logger on the state machine
+var setLogger sm.Option = func(sm *sm.StateMachine) error {
+	l, err := logger.GetZapLogger("debug", "")
+	if err != nil {
+		return err
+	}
+	sm.SetLogger(l)
+	return nil
 }
