@@ -16,14 +16,11 @@ func OrderProcessor() {
 	}
 
 	fmt.Printf("The initial state is: %s\n", op.GetCurrentState())
+	ctx := &order_processor.OrderCreationContext{
+		Items: []string{"hat", "shoe"},
+	}
 
-	err = op.SendEvent(order_processor.CreateOrder, order_processor.OrderCreationContext{
-		Items: []string{
-			"hat",
-			"shoe",
-			"can",
-		},
-	})
+	err = op.SendEvent(order_processor.CreateOrder, ctx)
 	if err != nil {
 		log.Fatalf("Failed to send event: %v", err)
 	}

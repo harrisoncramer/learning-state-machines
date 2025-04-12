@@ -11,12 +11,12 @@ import (
 type creatingOrderAction struct{}
 
 func (c *creatingOrderAction) Execute(event sm.EventContext) (sm.Event, error) {
-	order, ok := event.(OrderCreationContext)
+	order, ok := event.(*OrderCreationContext)
 	if !ok {
-		return "", fmt.Errorf("%w: order_creation got %T but expected OrderCreationContext", ErrBadExecutionContext, order)
+		return "", fmt.Errorf("%w: order_creation got %T but expected *OrderCreationContext", ErrBadExecutionContext, order)
 	}
 
-	err := doSomeBusinessLogic(order)
+	err := doSomeBusinessLogic(*order)
 	if err != nil {
 		order.err = err
 		return FailOrder, nil
