@@ -37,7 +37,7 @@ const (
 	DeliverOrder    sm.Event = "DeliverOrder"
 )
 
-var ErrMissingOrderContext = errors.New("missing order creation context")
+var ErrBadExecutionContext = errors.New("bad execution context")
 
 func NewOrderProcessor(opts ...sm.Option) (*sm.StateMachine, error) {
 	return sm.NewStateMachine(orderNotPlaced, sm.StateMap{

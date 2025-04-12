@@ -137,16 +137,15 @@ func (s *StateMachine) SendEvent(event Event, eventContext EventContext) error {
 		// If there is no action required when entering this state
 		// then just return early
 		if state.Action == nil {
-			fmt.Println("No action")
 			s.logger.Debug("No action found, exiting")
 			return nil
 		}
 
-		fmt.Printf("%+v", state.Action)
-
 		// Otherwise, execute the next state's action and pass along the event context
 		// This event context can be used for side effects or to pass along other arbitrary data
 		// besides just the event name that may be needed by the action itself
+		s.logger.Debug("Calling action", zap.Stringer("next_state", nextState))
+
 		nextEvent, err := state.Action.Execute(eventContext)
 		if err != nil {
 			return fmt.Errorf("failed to execute action: %w", err)

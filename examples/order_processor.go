@@ -28,7 +28,7 @@ func OrderProcessor() {
 		log.Fatalf("Failed to send event: %v", err)
 	}
 
-	op.GetCurrentState()
+	fmt.Printf("The next state is: %s\n", op.GetCurrentState())
 
 }
 

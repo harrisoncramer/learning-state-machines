@@ -9,9 +9,9 @@ import (
 type orderDeliveredAction struct{}
 
 func (a *orderDeliveredAction) Execute(eventCtx sm.EventContext) (sm.Event, error) {
-	order, ok := eventCtx.(*OrderCreationContext)
+	order, ok := eventCtx.(OrderCreationContext)
 	if !ok {
-		return "", ErrMissingOrderContext
+		return "", fmt.Errorf("%w: order_delivered got %T but expected OrderCreationContext", ErrBadExecutionContext, order)
 	}
 	fmt.Println("Order delivered, items:", order.Items)
 	return sm.NoOp, nil

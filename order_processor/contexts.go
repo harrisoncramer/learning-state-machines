@@ -13,8 +13,7 @@ type OrderShipmentContext struct {
 }
 
 func (c *OrderShipmentContext) String() string {
-	return fmt.Sprintf("OrderShipmentContext [ cardNumber: %s, address: %s, err: %v ]",
-		c.cardNumber, c.address, c.err)
+	return fmt.Sprintf("OrderShipmentContext [ cardNumber: %s, address: %s ]", c.cardNumber, c.address)
 }
 
 // OrderCreationContext contains data about the actual order, including the items and any errors that pertain to it

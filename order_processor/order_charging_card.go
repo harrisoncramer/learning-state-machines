@@ -12,7 +12,7 @@ type orderChargingCardAction struct{}
 func (a *orderChargingCardAction) Execute(eventCtx sm.EventContext) (sm.Event, error) {
 	shipment, ok := eventCtx.(*OrderShipmentContext)
 	if !ok {
-		return "", ErrMissingOrderContext
+		return "", fmt.Errorf("%w: charging_card got %T but expected OrderShipmentContext", ErrBadExecutionContext, shipment)
 	}
 
 	fmt.Println("Validating card, shipment:", shipment)
