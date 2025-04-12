@@ -8,46 +8,33 @@ import (
 
 const (
 	// The light switch can be in either an on or an off state
-	Off sm.StateType = "Off"
-	On  sm.StateType = "On"
+	Off sm.State = "Off"
+	On  sm.State = "On"
 
 	// The two types of events are a "switch off" or a "switch on"
 	SwitchOff sm.EventType = "SwitchOff"
 	SwitchOn  sm.EventType = "SwitchOn"
 )
 
-// OffAction represents the action executed on entering the Off state.
-type OffAction struct{}
-
-func (a *OffAction) Execute(event sm.Event) sm.EventType {
-	fmt.Println("The light has been switched off")
-	return sm.NoOp
-}
-
 // OnAction represents the action executed on entering the On state.
 type OnAction struct{}
 
-func (a *OnAction) Execute(event sm.Event) sm.EventType {
-	fmt.Println("The light has been switched on")
+func (a *OnAction) Execute(event sm.EventType) sm.EventType {
+	fmt.Printf("%s: Light turned on: 💡\n", event)
 	return sm.NoOp
 }
 
-func NewLightSwitch() sm.StateMachine {
-	return sm.NewStateMachine(sm.States{
-		sm.Default: sm.State{
-			Events: sm.Events{
-				SwitchOff: Off,
-			},
-		},
-		Off: sm.State{
-			Action: &OffAction{},
-			Events: sm.Events{
+func NewLightSwitch() *sm.StateMachine {
+	return sm.NewStateMachine(Off, sm.StateMap{
+		Off: {
+			// Action: nil, // No action for off!
+			EventMap: sm.EventMap{
 				SwitchOn: On,
 			},
 		},
-		On: sm.State{
+		On: {
 			Action: &OnAction{},
-			Events: sm.Events{
+			EventMap: sm.EventMap{
 				SwitchOff: Off,
 			},
 		},
