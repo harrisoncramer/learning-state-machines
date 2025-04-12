@@ -14,19 +14,22 @@ const (
 
 // The two types of events are a "switch off" or a "switch on"
 const (
-	SwitchOff sm.EventType = "SwitchOff"
-	SwitchOn  sm.EventType = "SwitchOn"
+	SwitchOff sm.Event = "SwitchOff"
+	SwitchOn  sm.Event = "SwitchOn"
 )
 
 // onAction represents the action executed on entering the On state.
 type onAction struct{}
 
-func (a *onAction) Execute(event sm.EventType) sm.EventType {
-	fmt.Printf("%s: Light turned on: 💡\n", event)
+func (a *onAction) Execute(event sm.EventContext) sm.Event {
+	fmt.Println("Light turned on: 💡")
+	if event != nil {
+		fmt.Printf("Context provided: %+v\n", event)
+	}
 	return sm.NoOp
 }
 
-func NewLightSwitch() sm.StateMachine {
+func NewLightSwitch() *sm.StateMachine {
 	return sm.NewStateMachine(lightOff, sm.StateMap{
 		lightOff: {
 			EventMap: sm.EventMap{
@@ -39,5 +42,5 @@ func NewLightSwitch() sm.StateMachine {
 				SwitchOff: lightOff,
 			},
 		},
-	})
+	}, func(sm *sm.StateMachine) {})
 }

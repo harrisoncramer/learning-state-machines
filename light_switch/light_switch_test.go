@@ -8,7 +8,7 @@ import (
 )
 
 type EventAndState struct {
-	event *sm.EventType
+	event *sm.Event
 	state sm.State
 	error error
 }
@@ -100,7 +100,7 @@ func TestLightSwitch(t *testing.T) {
 			ls := NewLightSwitch()
 			for _, eventAndState := range tt.events {
 				if eventAndState.event != nil {
-					err := ls.SendEvent(*eventAndState.event)
+					err := ls.SendEvent(*eventAndState.event, nil)
 					if err != nil {
 						if eventAndState.error == nil {
 							t.Fatalf("Got unexpected error: %v", err)

@@ -2,27 +2,16 @@ package main
 
 import (
 	"fmt"
-	"log"
+	"os"
 
-	lightswitch "github.com/harrisoncramer/learning-state-machines/light_switch"
+	"github.com/harrisoncramer/learning-state-machines/examples"
 )
 
 func main() {
-	ls := lightswitch.NewLightSwitch()
-
-	fmt.Printf("The initial state is: %s\n", ls.GetCurrentState())
-
-	err := ls.SendEvent(lightswitch.SwitchOn)
-	if err != nil {
-		log.Fatal(err)
+	if len(os.Args) != 2 {
+		fmt.Println("Please provide exactly one argument.")
+		os.Exit(1)
 	}
-
-	fmt.Printf("The current state is: %s\n", ls.GetCurrentState())
-
-	err = ls.SendEvent(lightswitch.SwitchOff)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Printf("The current state is: %s\n", ls.GetCurrentState())
+	program := os.Args[1]
+	examples.Run(program)
 }
