@@ -27,7 +27,6 @@ func (a *OnAction) Execute(event sm.EventType) sm.EventType {
 func NewLightSwitch() *sm.StateMachine {
 	return sm.NewStateMachine(Off, sm.StateMap{
 		Off: {
-			// Action: nil, // No action for off!
 			EventMap: sm.EventMap{
 				SwitchOn: On,
 			},
