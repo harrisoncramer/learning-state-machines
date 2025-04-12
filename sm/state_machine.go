@@ -1,6 +1,7 @@
 package sm
 
 import (
+	"context"
 	"fmt"
 	"sync"
 
@@ -17,23 +18,17 @@ type StateMachine struct {
 	currentState State
 	stateMap     StateMap
 	mutex        sync.Mutex
-	logger       *zap.Logger
 }
 
 // Option is a functional option pattern that can be used to configure the state machine
 type Option func(*StateMachine) error
 
 func NewStateMachine(initialState State, stateMap StateMap, opts ...Option) (*StateMachine, error) {
-	logger, err := logger.GetZapLogger("info", "2006-01-02 15:04:05.000 MST")
-	if err != nil {
-		return nil, fmt.Errorf("failed to configure logger: %w", err)
-	}
 
 	s := &StateMachine{
 		currentState: initialState,
 		stateMap:     stateMap,
 		mutex:        sync.Mutex{},
-		logger:       logger,
 	}
 
 	for i, opt := range opts {
@@ -106,7 +101,12 @@ func (s *StateMachine) getNextState(event Event) (State, error) {
 }
 
 // Send event sends an event to the state machine
-func (s *StateMachine) SendEvent(event Event, eventContext EventContext) error {
+func (s *StateMachine) SendEvent(ctx context.Context, event Event, eventContext EventContext) error {
+
+	logger, err := logger.GetZapLogger("info", "2006-01-02 15:04:05.000 MST")
+	if err != nil {
+		return fmt.Errorf("failed to configure logger: %w", err)
+	}
 
 	// Lock the current state so that state transitions are valid
 	s.mutex.Lock()
@@ -126,7 +126,7 @@ func (s *StateMachine) SendEvent(event Event, eventContext EventContext) error {
 		}
 
 		// Update the current state
-		s.logger.Debug(
+		logger.Debug(
 			"Updated current state",
 			zap.Stringer("current_state", s.currentState),
 			zap.Stringer("next_state", nextState),
@@ -137,14 +137,14 @@ func (s *StateMachine) SendEvent(event Event, eventContext EventContext) error {
 		// If there is no action required when entering this state
 		// then just return early
 		if state.Action == nil {
-			s.logger.Debug("No action found, exiting")
+			logger.Debug("No action found, exiting")
 			return nil
 		}
 
 		// Otherwise, execute the next state's action and pass along the event context
 		// This event context can be used for side effects or to pass along other arbitrary data
 		// besides just the event name that may be needed by the action itself
-		s.logger.Debug("Calling action", zap.Stringer("next_state", nextState))
+		logger.Debug("Calling action", zap.Stringer("next_state", nextState))
 
 		nextEvent, err := state.Action.Execute(eventContext)
 		if err != nil {
@@ -153,11 +153,11 @@ func (s *StateMachine) SendEvent(event Event, eventContext EventContext) error {
 
 		// If it returns a no-op, then exit
 		if nextEvent == NoOp {
-			s.logger.Debug("Action returned nil, exiting")
+			logger.Debug("Action returned nil, exiting")
 			return nil
 		}
 
-		s.logger.Debug(
+		logger.Debug(
 			"Action returned next event",
 			zap.Stringer("next_event", nextEvent),
 		)
@@ -170,8 +170,4 @@ func (s *StateMachine) SendEvent(event Event, eventContext EventContext) error {
 // Gets the current state, for use outside the package
 func (s *StateMachine) GetCurrentState() State {
 	return s.currentState
-}
-
-func (s *StateMachine) SetLogger(l *zap.Logger) {
-	s.logger = l
 }

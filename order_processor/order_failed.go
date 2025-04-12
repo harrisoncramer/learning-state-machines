@@ -13,6 +13,6 @@ func (a *orderFailedAction) Execute(eventCtx sm.EventContext) (sm.Event, error) 
 	if !ok {
 		return "", fmt.Errorf("%w: order_failed got %T but expected *OrderCreationContext", ErrBadExecutionContext, order)
 	}
-	fmt.Println("Order failed, err:", order.err)
+	fmt.Printf("Order failed: %v\n", order.err)
 	return sm.NoOp, nil
 }
