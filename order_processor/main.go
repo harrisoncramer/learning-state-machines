@@ -1,8 +1,6 @@
 package order_processor
 
 import (
-	"errors"
-
 	"github.com/harrisoncramer/learning-state-machines/sm"
 )
 
@@ -37,7 +35,10 @@ const (
 	DeliverOrder    sm.Event = "DeliverOrder"
 )
 
-var ErrBadExecutionContext = errors.New("bad execution context")
+const (
+	OrderContextKey    sm.ContextKey = "orderContextKey"
+	ShipmentContextKey sm.ContextKey = "shipmentContextKey"
+)
 
 func NewOrderProcessor(opts ...sm.Option) (*sm.StateMachine, error) {
 	return sm.NewStateMachine(orderNotPlaced, sm.StateMap{

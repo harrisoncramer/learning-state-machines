@@ -10,10 +10,11 @@ import (
 type orderFailedAction struct{}
 
 func (a *orderFailedAction) Execute(ctx context.Context) (sm.Event, error) {
-	order, ok := ctx.Value("order").(*Order)
-	if !ok {
-		return "", fmt.Errorf("%w: order_failed did not have order", ErrBadExecutionContext)
+	order, err := sm.GetValueFromContext[Order](ctx, OrderContextKey)
+	if err != nil {
+		return sm.NoOp, err
 	}
+
 	fmt.Printf("Order %s failed: %v\n", order.ID, order.Err)
 	return sm.NoOp, nil
 }

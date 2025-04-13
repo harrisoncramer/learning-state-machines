@@ -2,6 +2,7 @@ package sm
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sync"
 
@@ -135,4 +136,17 @@ func (s *StateMachine) SendEvent(ctx context.Context, event Event) error {
 // Gets the current state, for use outside the package
 func (s *StateMachine) GetCurrentState() State {
 	return s.currentState
+}
+
+// Context keys for passing data between the different actions
+type ContextKey string
+
+var ErrBadExecutionContext = errors.New("bad execution context")
+
+func GetValueFromContext[T any](ctx context.Context, key ContextKey) (res *T, err error) {
+	val, ok := ctx.Value(key).(*T)
+	if !ok {
+		return nil, fmt.Errorf("%w: context did not have %s", ErrBadExecutionContext, key)
+	}
+	return val, nil
 }

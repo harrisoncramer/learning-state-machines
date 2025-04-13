@@ -3,7 +3,6 @@ package order_processor
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/harrisoncramer/learning-state-machines/sm"
 )
@@ -12,12 +11,12 @@ import (
 type creatingOrderAction struct{}
 
 func (c *creatingOrderAction) Execute(ctx context.Context) (sm.Event, error) {
-	order, ok := ctx.Value("order").(*Order)
-	if !ok {
-		return "", fmt.Errorf("%w: order_creation did not have order", ErrBadExecutionContext)
+	order, err := sm.GetValueFromContext[Order](ctx, OrderContextKey)
+	if err != nil {
+		return sm.NoOp, err
 	}
 
-	err := doSomeBusinessLogic(*order)
+	err = doSomeBusinessLogic(order)
 	if err != nil {
 		order.Err = err
 		return FailOrder, nil
@@ -26,7 +25,7 @@ func (c *creatingOrderAction) Execute(ctx context.Context) (sm.Event, error) {
 	return sm.NoOp, nil
 }
 
-func doSomeBusinessLogic(order Order) error {
+func doSomeBusinessLogic(order *Order) error {
 	_ = order
 	return errors.New("fake error")
 }

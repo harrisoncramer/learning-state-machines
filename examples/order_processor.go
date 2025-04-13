@@ -16,7 +16,7 @@ func OrderProcessor() {
 	}
 
 	fmt.Printf("The initial state is: %s\n", op.GetCurrentState())
-	ctx := context.WithValue(context.Background(), "order", &order_processor.Order{
+	ctx := context.WithValue(context.Background(), order_processor.OrderContextKey, &order_processor.Order{
 		Items: []string{"hat", "shoe"},
 		ID:    uuid.New(),
 	})

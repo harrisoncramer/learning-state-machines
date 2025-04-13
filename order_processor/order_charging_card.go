@@ -11,9 +11,9 @@ import (
 type orderChargingCardAction struct{}
 
 func (a *orderChargingCardAction) Execute(ctx context.Context) (sm.Event, error) {
-	shipment, ok := ctx.Value("shipment").(*Shipment)
-	if !ok {
-		return "", fmt.Errorf("%w: charging_card did not have shipment", ErrBadExecutionContext)
+	shipment, err := sm.GetValueFromContext[Shipment](ctx, ShipmentContextKey)
+	if err != nil {
+		return sm.NoOp, err
 	}
 
 	fmt.Println("Validating card, shipment:", shipment)
