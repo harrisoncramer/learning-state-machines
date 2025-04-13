@@ -1,27 +1,19 @@
 package order_processor
 
 import (
-	"fmt"
-	"strings"
+	"github.com/google/uuid"
 )
 
-// OrderShipmentContext defines details about the shipping of the order
-type OrderShipmentContext struct {
-	cardNumber string
-	address    string
-	err        error
+// Shipment defines details about the shipping of the order
+type Shipment struct {
+	CardNumber string
+	Address    string
+	Err        error
 }
 
-func (c *OrderShipmentContext) String() string {
-	return fmt.Sprintf("OrderShipmentContext [ cardNumber: %s, address: %s ]", c.cardNumber, c.address)
-}
-
-// OrderCreationContext contains data about the actual order, including the items and any errors that pertain to it
-type OrderCreationContext struct {
+// Order contains data about the actual order, including the items and any errors that pertain to it
+type Order struct {
+	ID    uuid.UUID
 	Items []string
-	err   error
-}
-
-func (c OrderCreationContext) String() string {
-	return fmt.Sprintf("OrderCreationContext: items: %s; err: %s", strings.Join(c.Items, ","), c.err)
+	Err   error
 }

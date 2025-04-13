@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/google/uuid"
 	"github.com/harrisoncramer/learning-state-machines/order_processor"
 )
 
@@ -15,8 +16,9 @@ func OrderProcessor() {
 	}
 
 	fmt.Printf("The initial state is: %s\n", op.GetCurrentState())
-	ctx := context.WithValue(context.Background(), "order", &order_processor.OrderCreationContext{
+	ctx := context.WithValue(context.Background(), "order", &order_processor.Order{
 		Items: []string{"hat", "shoe"},
+		ID:    uuid.New(),
 	})
 	err = op.SendEvent(ctx, order_processor.CreateOrder)
 	if err != nil {

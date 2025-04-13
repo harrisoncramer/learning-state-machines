@@ -12,21 +12,21 @@ import (
 type creatingOrderAction struct{}
 
 func (c *creatingOrderAction) Execute(ctx context.Context) (sm.Event, error) {
-	order, ok := ctx.Value("order").(*OrderCreationContext)
+	order, ok := ctx.Value("order").(*Order)
 	if !ok {
 		return "", fmt.Errorf("%w: order_creation did not have order", ErrBadExecutionContext)
 	}
 
 	err := doSomeBusinessLogic(*order)
 	if err != nil {
-		order.err = err
+		order.Err = err
 		return FailOrder, nil
 	}
 
 	return sm.NoOp, nil
 }
 
-func doSomeBusinessLogic(order OrderCreationContext) error {
+func doSomeBusinessLogic(order Order) error {
 	_ = order
 	return errors.New("fake error")
 }
