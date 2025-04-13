@@ -104,7 +104,7 @@ func TestLightSwitch(t *testing.T) {
 			}
 			for _, eventAndState := range tt.events {
 				if eventAndState.event != nil {
-					err := ls.SendEvent(context.Background(), *eventAndState.event, nil)
+					err := ls.SendEvent(context.Background(), *eventAndState.event)
 					if err != nil {
 						if eventAndState.error == nil {
 							t.Fatalf("Got unexpected error: %v", err)

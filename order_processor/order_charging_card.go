@@ -1,6 +1,7 @@
 package order_processor
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
@@ -9,10 +10,10 @@ import (
 
 type orderChargingCardAction struct{}
 
-func (a *orderChargingCardAction) Execute(eventCtx sm.EventData) (sm.Event, error) {
-	shipment, ok := eventCtx.(*OrderShipmentContext)
+func (a *orderChargingCardAction) Execute(ctx context.Context) (sm.Event, error) {
+	shipment, ok := ctx.Value("shipment").(*OrderShipmentContext)
 	if !ok {
-		return "", fmt.Errorf("%w: charging_card got %T but expected *OrderShipmentContext", ErrBadExecutionContext, shipment)
+		return "", fmt.Errorf("%w: charging_card did not have shipment", ErrBadExecutionContext)
 	}
 
 	fmt.Println("Validating card, shipment:", shipment)

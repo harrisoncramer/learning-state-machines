@@ -1,5 +1,7 @@
 package sm
 
+import "context"
+
 // State represents an extensible state type in the state machine
 // The state machine will always be in one of these state types at any
 // given time
@@ -17,10 +19,6 @@ func (s Event) String() string {
 	return string(s)
 }
 
-// EventData is data that's passed to each action when an event occurs. It's not required
-// but can be used to pass data through the system, often via a pointer
-type EventData any
-
 // NoOp is a special event that will cause the state machine to stop executing
 const NoOp Event = "NoOp"
 
@@ -37,7 +35,7 @@ type StateMap map[State]struct {
 	// is entered, and will return a new event, which will cause a new state to be entered, and so forth.
 	// If a state does not have an action, then the state machine will treat that state as the end of the chain (like a no-op).
 	Action interface {
-		Execute(eventData EventData) (Event, error)
+		Execute(ctx context.Context) (Event, error)
 	}
 	EventMap EventMap
 }

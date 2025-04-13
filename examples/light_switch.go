@@ -16,14 +16,14 @@ func LightSwitch() {
 
 	fmt.Printf("The initial state is: %s\n", ls.GetCurrentState())
 
-	err = ls.SendEvent(context.Background(), light_switch.SwitchOn, nil) // No additional context is needed
+	err = ls.SendEvent(context.Background(), light_switch.SwitchOn)
 	if err != nil {
 		log.Fatalf("Failed to send event: %v", err)
 	}
 
 	fmt.Printf("The current state is: %s\n", ls.GetCurrentState())
 
-	err = ls.SendEvent(context.Background(), light_switch.SwitchOff, nil)
+	err = ls.SendEvent(context.Background(), light_switch.SwitchOff)
 	if err != nil {
 		log.Fatalf("Failed to send event: %v", err)
 	}

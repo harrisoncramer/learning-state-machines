@@ -1,6 +1,7 @@
 package order_processor
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/harrisoncramer/learning-state-machines/sm"
@@ -8,8 +9,8 @@ import (
 
 type orderTransactionFailedAction struct{}
 
-func (a *orderTransactionFailedAction) Execute(eventCtx sm.EventData) (sm.Event, error) {
-	shipment, ok := eventCtx.(*OrderShipmentContext)
+func (a *orderTransactionFailedAction) Execute(ctx context.Context) (sm.Event, error) {
+	shipment, ok := ctx.Value("shipment").(*OrderShipmentContext)
 	if !ok {
 		return "", fmt.Errorf("%w: order_transaction_failed got %T but expected *OrderShipmentContext", ErrBadExecutionContext, shipment)
 	}

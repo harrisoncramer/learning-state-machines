@@ -1,6 +1,7 @@
 package light_switch
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/harrisoncramer/learning-state-machines/sm"
@@ -21,10 +22,10 @@ const (
 // onAction represents the action executed on entering the On state.
 type onAction struct{}
 
-func (a *onAction) Execute(event sm.EventData) (sm.Event, error) {
+func (a *onAction) Execute(ctx context.Context) (sm.Event, error) {
 	fmt.Println("Light turned on: 💡")
-	if event != nil {
-		fmt.Printf("Context provided: %+v\n", event)
+	if ctx != nil {
+		fmt.Printf("Context provided: %+v\n", ctx)
 	}
 	return sm.NoOp, nil
 }

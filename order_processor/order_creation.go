@@ -1,6 +1,7 @@
 package order_processor
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
@@ -10,10 +11,10 @@ import (
 // creatingOrderAction includes the action that fires when we enter the creating order state
 type creatingOrderAction struct{}
 
-func (c *creatingOrderAction) Execute(event sm.EventData) (sm.Event, error) {
-	order, ok := event.(*OrderCreationContext)
+func (c *creatingOrderAction) Execute(ctx context.Context) (sm.Event, error) {
+	order, ok := ctx.Value("order").(*OrderCreationContext)
 	if !ok {
-		return "", fmt.Errorf("%w: order_creation got %T but expected *OrderCreationContext", ErrBadExecutionContext, order)
+		return "", fmt.Errorf("%w: order_creation did not have order", ErrBadExecutionContext)
 	}
 
 	err := doSomeBusinessLogic(*order)
