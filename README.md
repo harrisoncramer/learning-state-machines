@@ -14,7 +14,3 @@ A state machine consists of states, transitions, events, and actions.
 Together, these components provide a structured way to handle changes in application behavior.
 
 One of the significant advantages of using state machines is their ability to model real-world processes accurately. This makes them particularly useful in domains such as robotics, telecommunications, and user interface development. By mapping out the possible states and transitions, you can ensure that the application handles every possible scenario.
-
-## Implementing them in Go
-
-1. Create an niter
