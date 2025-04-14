@@ -69,10 +69,7 @@ func (s *StateMachine) getNextState(event Event) (State, error) {
 // Send event sends an event to the state machine
 func (s *StateMachine) SendEvent(ctx context.Context, event Event) error {
 
-	logger, err := logger.GetZapLogger("info", "2006-01-02 15:04:05.000 MST")
-	if err != nil {
-		return fmt.Errorf("failed to configure logger: %w", err)
-	}
+	logger := logger.GetZapLogger()
 
 	// Lock the current state so that state transitions are valid
 	s.mutex.Lock()
